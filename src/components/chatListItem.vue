@@ -31,6 +31,9 @@ export default {
     },
   },
   props: {
+    parentWidth: {
+      type: String,
+    },
     title: {
       type: String,
       default: "新的聊天",

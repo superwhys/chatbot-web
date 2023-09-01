@@ -22,8 +22,9 @@
         v-for="(item, index) in chatHistory"
         :key="index"
         :title="item.title"
-        :chatCount="item.chatCount"
         :chatTime="item.chatTime"
+        :chatCount="item.chatCount"
+        :parentWidth="parentWidth"
         :class="{ 'item-active': activeItem === index }"
         @click.native="activeFun(index)"
       ></chat-list-item>
@@ -78,6 +79,7 @@
 
 <script>
 import ChatListItem from "@/components/chatListItem.vue";
+import { isParentWidthLessThanSpecifyWidth } from "@/utils/commons";
 
 export default {
   name: "sidebarPage",
@@ -126,43 +128,48 @@ export default {
     activeFun(index) {
       this.activeItem = index;
     },
-    parseParentWidth() {
-      console.log(this.parentWidth);
-      let pWidth = this.parentWidth.replace("px", "");
-      return parseInt(pWidth);
-    },
-    isParentWidthLessThanSpecifyWidth(specifyWidth) {
-      return this.parseParentWidth() < specifyWidth;
-    },
     isParentWidthLessThanThreshold() {
-      return this.isParentWidthLessThanSpecifyWidth(this.commonThreshold);
+      return isParentWidthLessThanSpecifyWidth(
+        this.parentWidth,
+        this.commonThreshold
+      );
     },
     isTailActionCenter() {
-      return this.isParentWidthLessThanSpecifyWidth(this.tailThreshold);
+      return isParentWidthLessThanSpecifyWidth(
+        this.parentWidth,
+        this.tailThreshold
+      );
     },
     isTailWidthLessThanThreshold() {
       if (
-        this.isParentWidthLessThanSpecifyWidth(
+        isParentWidthLessThanSpecifyWidth(
+          this.parentWidth,
           this.tailActionTextDisplayThreshold
         )
       ) {
         return false;
       }
-      return this.isParentWidthLessThanSpecifyWidth(this.tailThreshold);
+      return isParentWidthLessThanSpecifyWidth(
+        this.parentWidth,
+        this.tailThreshold
+      );
     },
     isShowTailActionText(initialize) {
       // 当父元素宽度小于tailThreshold时，所有tailItem都显示文字
       // 当大于tailThreshold时，为初始状态，利用initialize控制
       // 当父元素宽度小于tailActionTextDisplayThreshold时，所有tailItem都不显示文字
       if (
-        this.isParentWidthLessThanSpecifyWidth(
+        isParentWidthLessThanSpecifyWidth(
+          this.parentWidth,
           this.tailActionTextDisplayThreshold
         )
       ) {
         return false;
       }
 
-      if (this.isParentWidthLessThanSpecifyWidth(this.tailThreshold)) {
+      if (
+        isParentWidthLessThanSpecifyWidth(this.parentWidth, this.tailThreshold)
+      ) {
         return true;
       }
       return initialize;
